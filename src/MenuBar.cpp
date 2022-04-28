@@ -6,5 +6,14 @@ MenuBar::MenuBar() : wxMenuBar()
   file = new wxMenu();
   file->Append(fileExit);
   Append(file, "File");
+
+  viewToggleControls = new wxMenuItem(
+    nullptr,
+    TOGGLE_CONTROLS,
+    "Show/Hide Controls"
+  );
+  view = new wxMenu();
+  view->Append(viewToggleControls);
+  Append(view, "View");
 }
 

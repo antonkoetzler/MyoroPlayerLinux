@@ -12,6 +12,7 @@ class Frame : public wxFrame
   ~Frame();
 
   void exit(wxCommandEvent&);
+  void toggleControls(wxCommandEvent&);
 
  private:
   DECLARE_EVENT_TABLE();
@@ -19,6 +20,6 @@ class Frame : public wxFrame
   MenuBar* menubar;
   wxBoxSizer* sizer;
     SongList* songlist;
-    Controls* controls = nullptr;
+    Controls* controls;
 };
 

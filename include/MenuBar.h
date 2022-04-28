@@ -2,6 +2,8 @@
 
 #include <wx/wx.h>
 
+enum { TOGGLE_CONTROLS };
+
 class MenuBar : public wxMenuBar
 {
  public:
@@ -10,5 +12,7 @@ class MenuBar : public wxMenuBar
  private:
   wxMenu* file;
     wxMenuItem* fileExit;
+  wxMenu* view;
+    wxMenuItem* viewToggleControls;
 };
 

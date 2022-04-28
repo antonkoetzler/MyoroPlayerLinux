@@ -1,6 +1,7 @@
 #pragma once
 
 #include <wx/wx.h>
+#include <wx/dir.h>
 
 enum { SONGLIST };
 
@@ -10,5 +11,6 @@ class SongList : public wxListBox
   SongList(wxFrame*);
 
  private:
+  wxDir* directory;
 };
 
