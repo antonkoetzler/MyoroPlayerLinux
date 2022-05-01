@@ -7,6 +7,9 @@ END_EVENT_TABLE()
 
 Frame::Frame() : wxFrame(nullptr, wxID_ANY, "MyoroPlayerLinux", wxDefaultPosition, wxSize(1000, 800))
 {
+  // Need to init JPEG image handler
+  wxImage::AddHandler(new wxJPEGHandler);
+
   songlist = new SongList(this);
   controls = new Controls(this); controls->Show(false);
   sizer = new wxBoxSizer(wxVERTICAL);
