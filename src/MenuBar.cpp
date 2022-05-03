@@ -2,8 +2,14 @@
 
 MenuBar::MenuBar() : wxMenuBar()
 {
+  fileChangeDirectory = new wxMenuItem(
+    nullptr,
+    CHANGE_DIRECTORY,
+    "Change Playlist Directory\tCtrl+O"
+  );
   fileExit = new wxMenuItem(nullptr, wxID_EXIT, "Exit\tCtrl+Q");
   file = new wxMenu();
+  file->Append(fileChangeDirectory);
   file->Append(fileExit);
   Append(file, "File");
 

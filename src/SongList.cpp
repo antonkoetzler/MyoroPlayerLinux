@@ -1,8 +1,18 @@
 #include "SongList.h"
 
-SongList::SongList(wxFrame* parent) : wxListBox(parent, SONGLIST, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxLB_NEEDED_SB | wxLB_SORT)
+SongList::SongList(wxFrame* parent) : wxListBox(parent, SONGLIST, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxLB_NEEDED_SB | wxLB_SORT) { appendSongs(); }
+
+SongList::SongList(wxFrame* parent, wxString playlistDirectoryArg) : wxListBox(parent, SONGLIST, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxLB_NEEDED_SB | wxLB_SORT)
 {
-  directory = new wxDir("./songs/");
+  if (playlistDirectoryArg[playlistDirectoryArg.length() - 1] != '/')
+    playlistDirectoryArg += '/';
+  playlistDirectory = playlistDirectoryArg;
+  appendSongs();
+}
+
+void SongList::appendSongs()
+{
+  directory = new wxDir(playlistDirectory);
 
   if (!directory->IsOpened()) exit(1);
 
