@@ -21,6 +21,7 @@ class Frame : public wxFrame
     void changeDirectory(wxCommandEvent&);
   void exit(wxCommandEvent&);
   void toggleControls(wxCommandEvent&);
+  void loadSong(wxCommandEvent&);
 
  private:
   DECLARE_EVENT_TABLE();

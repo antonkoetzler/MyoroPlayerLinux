@@ -1,1 +1,7 @@
 1. Playing music
+  1. Play/pause, next, previous, shuffle button functionality
+    1. ***SONG CACHING FUNCTIONALITY***
+  2. Adjusting musicSlider position
+  3. Volume slider functionality & adjusting volumeSlider position
+  4. Autoplay functionality
+  5. Queueing functionality

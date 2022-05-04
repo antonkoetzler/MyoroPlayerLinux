@@ -12,6 +12,7 @@ class SongList : public wxListBox
   SongList(wxFrame*, wxString);
 
   void appendSongs();
+  wxString getPlaylistDirectory();
 
  private:
   wxDir* directory;

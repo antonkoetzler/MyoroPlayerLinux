@@ -7,6 +7,8 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 
   EVT_TEXT_ENTER(CHANGE_DIRECTORY_INPUT, Frame::changeDirectory)
   EVT_BUTTON(CHANGE_DIRECTORY_BUTTON, Frame::changeDirectory)
+
+  EVT_LISTBOX_DCLICK(SONGLIST, Frame::loadSong)
 END_EVENT_TABLE()
 
 Frame::Frame() : wxFrame(nullptr, wxID_ANY, "MyoroPlayerLinux", wxDefaultPosition, wxSize(1000, 800))
@@ -15,7 +17,7 @@ Frame::Frame() : wxFrame(nullptr, wxID_ANY, "MyoroPlayerLinux", wxDefaultPositio
   wxImage::AddHandler(new wxJPEGHandler);
 
   songlist = new SongList(this);
-  controls = new Controls(this); controls->Show(false);
+  controls = new Controls(this, songlist); controls->Show(false);
   sizer = new wxBoxSizer(wxVERTICAL);
   sizer->Add(songlist, 1, wxEXPAND);
   sizer->Add(controls, 0, wxEXPAND);
@@ -73,8 +75,12 @@ void Frame::changeDirectory(wxCommandEvent& evt)
     // Clearing sizer's items without deleting them
     sizer->Clear(false);
 
+    // Creating a new SongList
     delete songlist;
     songlist = new SongList(this, directory);
+
+    // Updating controls' pointer to songlist
+    controls->setSongList(songlist);
 
     sizer->Add(songlist, 1, wxEXPAND);
     sizer->Add(controls, 0, wxEXPAND);
@@ -92,5 +98,17 @@ void Frame::toggleControls(wxCommandEvent& evt)
   if (!controls->IsShown()) controls->Show(true);
   else                      controls->Show(false);
   sizer->Layout();
+}
+
+void Frame::loadSong(wxCommandEvent& evt)
+{
+  if (!controls->IsShown())
+  {
+    controls->Show(true);
+    sizer->Layout();
+  }
+
+  wxString songDirectory = songlist->getPlaylistDirectory() + evt.GetString();
+  controls->loadMediaPlayer(songDirectory);
 }
 

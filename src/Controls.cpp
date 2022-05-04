@@ -1,6 +1,10 @@
 #include "Controls.h"
 
-Controls::Controls(wxFrame* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(1000, 90))
+BEGIN_EVENT_TABLE(Controls, wxPanel)
+  EVT_MEDIA_LOADED(MEDIA, Controls::playSong)
+END_EVENT_TABLE()
+
+Controls::Controls(wxFrame* parent, SongList* songlistArg) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(1000, 90))
 {
   initMusicInformation();
   initMusicControl();
@@ -15,6 +19,10 @@ Controls::Controls(wxFrame* parent) : wxPanel(parent, wxID_ANY, wxDefaultPositio
     wxSize(150, 40)
   );
 
+  mediaPlayer = new wxMediaCtrl(this, MEDIA);
+  updateSlider = new UpdateSlider(musicSlider, mediaPlayer);
+  songlist = songlistArg;
+
   // Adding everything to the parent sizer
   sizer = new wxBoxSizer(wxHORIZONTAL);
   sizer->Add(musicInformation, 0);
@@ -24,6 +32,8 @@ Controls::Controls(wxFrame* parent) : wxPanel(parent, wxID_ANY, wxDefaultPositio
   sizer->Add(volumeSlider, 0, wxALIGN_CENTRE_VERTICAL);
   SetSizer(sizer);
 }
+
+void Controls::setSongList(SongList* songlistArg) { songlist = songlistArg; }
 
 void Controls::initMusicControl()
 {
@@ -109,5 +119,15 @@ void Controls::initMusicInformation()
   musicInformation = new wxBoxSizer(wxHORIZONTAL);
   musicInformation->Add(albumCover, 0, wxALL, 5);
   musicInformation->Add(textInformation, 0, wxALIGN_CENTRE_VERTICAL);
+}
+
+void Controls::loadMediaPlayer(wxString songDirectory)
+{
+  if (!mediaPlayer->Load(songDirectory)) exit(1);
+}
+
+void Controls::playSong(wxMediaEvent& evt)
+{
+  mediaPlayer->Play();
 }
 

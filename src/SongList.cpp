@@ -45,3 +45,5 @@ void SongList::appendSongs()
   delete directory; directory = nullptr;
 }
 
+wxString SongList::getPlaylistDirectory() { return playlistDirectory; }
+
