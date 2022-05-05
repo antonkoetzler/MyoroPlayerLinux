@@ -8,5 +8,5 @@ ADD_EXECUTABLE(${PROJECT_NAME} ${SRC})
 TARGET_LINK_LIBRARIES(
   ${PROJECT_NAME}
   ${wxWidgets_LIBRARIES}
-  "-no-pie"
+  "-no-pie -ltag"
 )

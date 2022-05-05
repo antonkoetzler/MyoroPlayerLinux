@@ -16,7 +16,7 @@ Controls::Controls(wxFrame* parent, SongList* songlistArg) : wxPanel(parent, wxI
     0,
     100,
     wxDefaultPosition,
-    wxSize(150, 40)
+    wxSize(240, 40)
   );
 
   mediaPlayer = new wxMediaCtrl(this, MEDIA);
@@ -89,7 +89,7 @@ void Controls::initMusicControl()
 
 void Controls::initMusicInformation()
 {
-  wxBitmap bitmap; bitmap.LoadFile("./img/FromId3.jpg", wxBITMAP_TYPE_JPEG);
+  wxBitmap bitmap; bitmap.LoadFile("./img/noAlbumCover.png", wxBITMAP_TYPE_PNG);
   if (!bitmap.IsOk()) { exit(1); }
 
   // Converting wxBitmap to wxImage to use wxImage::Rescale
@@ -104,9 +104,9 @@ void Controls::initMusicInformation()
   textInformation = new wxStaticText(
     this,
     wxID_ANY,
-    "Song Name\nSong Album",
+    "Song Name",
     wxDefaultPosition,
-    wxSize(100, 32),
+    wxSize(150, 20),
     wxST_NO_AUTORESIZE | wxST_ELLIPSIZE_END
   );
   textInformation->SetFont(wxFont(
@@ -129,5 +129,79 @@ void Controls::loadMediaPlayer(wxString songDirectory)
 void Controls::playSong(wxMediaEvent& evt)
 {
   mediaPlayer->Play();
+
+  // Setting Controls::textInformation
+  wxString songName = songlist->GetString(songlist->GetSelection());
+  textInformation->SetLabel(songName);
+
+  // Getting album name and icon
+  wxString songDirectory = songlist->getPlaylistDirectory() + songName;
+  static const char *IdPicture = "APIC";
+  TagLib::MPEG::File mpegFile(songDirectory);
+  TagLib::ID3v2::Tag *id3v2tag = mpegFile.ID3v2Tag();
+  TagLib::ID3v2::FrameList Frame;
+  TagLib::ID3v2::AttachedPictureFrame *PicFrame;
+  void *RetImage = NULL, *SrcImage;
+  unsigned long Size;
+
+  FILE *jpegFile;
+  jpegFile = fopen("FromId3.jpg", "wb");
+
+  if ( id3v2tag )
+  {
+    // picture frame
+    Frame = id3v2tag->frameListMap()[IdPicture] ;
+    if (!Frame.isEmpty() )
+    {
+      for(TagLib::ID3v2::FrameList::ConstIterator it = Frame.begin(); it != Frame.end(); ++it)
+      {
+        PicFrame = (TagLib::ID3v2::AttachedPictureFrame *)(*it) ;
+        //  if ( PicFrame->type() ==
+        //TagLib::ID3v2::AttachedPictureFrame::FrontCover)
+        {
+          // extract image (in it’s compressed form)
+          Size = PicFrame->picture().size() ;
+          SrcImage = malloc ( Size ) ;
+          if ( SrcImage )
+          {
+            memcpy ( SrcImage, PicFrame->picture().data(), Size ) ;
+            fwrite(SrcImage,Size,1, jpegFile);
+            fclose(jpegFile);
+            free( SrcImage ) ;
+          }
+
+        }
+      }
+    }
+  }
+
+  wxBitmap bitmap; wxImage image; wxLogNull avoidErrors;
+  bitmap.LoadFile("./FromId3.jpg", wxBITMAP_TYPE_JPEG);
+
+  // Reloading Controls::albumCover
+  delete albumCover;
+  if (bitmap.IsOk())
+  {
+    image = bitmap.ConvertToImage();
+    image.Rescale(80, 80, wxIMAGE_QUALITY_HIGH);
+
+    wxBitmap scaledBitmap(image, -1);
+    albumCover = new wxStaticBitmap(this, wxID_ANY, scaledBitmap);
+  }
+  else
+  {
+    bitmap.LoadFile("./img/noAlbumCover.png", wxBITMAP_TYPE_PNG);
+    image = bitmap.ConvertToImage();
+    image.Rescale(80, 80, wxIMAGE_QUALITY_HIGH);
+
+    wxBitmap scaledBitmap(image, -1);
+    albumCover = new wxStaticBitmap(this, wxID_ANY, scaledBitmap);
+  }
+
+  // Must remove all of musicInformation's objects without deleting
+  musicInformation->Clear(false);
+  musicInformation->Add(albumCover, 0, wxALL, 5);
+  musicInformation->Add(textInformation, 0, wxALIGN_CENTRE_VERTICAL);
+  musicInformation->Layout();
 }
 

@@ -5,6 +5,14 @@
 #include <wx/mediactrl.h>
 #include "UpdateSlider.h"
 #include "SongList.h"
+// For finding album name and icon
+#include <taglib/id3v2tag.h>
+#include <taglib/mpegfile.h>
+#include <taglib/id3v2frame.h>
+#include <taglib/id3v2header.h>
+#include <taglib/attachedpictureframe.h>
+#include <cstdio>
+#include <string.h>
 
 enum { MEDIA };
 
