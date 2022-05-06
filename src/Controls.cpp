@@ -2,6 +2,10 @@
 
 BEGIN_EVENT_TABLE(Controls, wxPanel)
   EVT_MEDIA_LOADED(MEDIA, Controls::playSong)
+  EVT_BUTTON(SHUFFLE, Controls::toggleShuffle)
+  EVT_BUTTON(PLAY, Controls::togglePlay)
+  EVT_BUTTON(PREV, Controls::previousSong)
+  EVT_BUTTON(NEXT, Controls::nextSong)
 END_EVENT_TABLE()
 
 Controls::Controls(wxFrame* parent, SongList* songlistArg) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(1000, 90))
@@ -49,28 +53,28 @@ void Controls::initMusicControl()
 
   shuffle = new wxButton(
     this,
-    wxID_ANY,
+    SHUFFLE,
     "%",
     wxDefaultPosition,
     wxSize(50, 40)
   );
   previous = new wxButton(
     this,
-    wxID_ANY,
+    PREV,
     "<<",
     wxDefaultPosition,
     wxSize(50, 40)
   );
   play = new wxButton(
     this,
-    wxID_ANY,
+    PLAY,
     ">",
     wxDefaultPosition,
     wxSize(50, 40)
   );
   next = new wxButton(
     this,
-    wxID_ANY,
+    NEXT,
     ">>",
     wxDefaultPosition,
     wxSize(50, 40)
@@ -136,6 +140,7 @@ void Controls::playSong(wxMediaEvent& evt)
 
   // Getting album name and icon
   wxString songDirectory = songlist->getPlaylistDirectory() + songName;
+
   static const char *IdPicture = "APIC";
   TagLib::MPEG::File mpegFile(songDirectory);
   TagLib::ID3v2::Tag *id3v2tag = mpegFile.ID3v2Tag();
@@ -143,10 +148,8 @@ void Controls::playSong(wxMediaEvent& evt)
   TagLib::ID3v2::AttachedPictureFrame *PicFrame;
   void *RetImage = NULL, *SrcImage;
   unsigned long Size;
-
   FILE *jpegFile;
   jpegFile = fopen("FromId3.jpg", "wb");
-
   if ( id3v2tag )
   {
     // picture frame
@@ -169,7 +172,6 @@ void Controls::playSong(wxMediaEvent& evt)
             fclose(jpegFile);
             free( SrcImage ) ;
           }
-
         }
       }
     }
@@ -203,5 +205,65 @@ void Controls::playSong(wxMediaEvent& evt)
   musicInformation->Add(albumCover, 0, wxALL, 5);
   musicInformation->Add(textInformation, 0, wxALIGN_CENTRE_VERTICAL);
   musicInformation->Layout();
+
+  // Adding song to Controls::songCache
+  songCache.push_back(songDirectory);
+}
+
+void Controls::toggleShuffle(wxCommandEvent& evt)
+{
+  switch (shuffleToggle)
+  {
+    case 0:
+      shuffleToggle = 1;
+      break;
+    case 1:
+      shuffleToggle = 0;
+      break;
+  }
+}
+
+void Controls::togglePlay(wxCommandEvent& evt)
+{
+  wxMediaState state = mediaPlayer->GetState();
+
+  switch (state)
+  {
+    case wxMEDIASTATE_PLAYING:
+      mediaPlayer->Pause();
+      break;
+    case wxMEDIASTATE_PAUSED:
+      mediaPlayer->Play();
+      break;
+  }
+}
+
+void Controls::previousSong(wxCommandEvent& evt)
+{
+  // Since the current song is in the songCache, we need 2 in the vector
+  if (songCache.size() > 1)
+  {
+    songCache.pop_back();
+    wxString newSongDirectory = songCache[songCache.size() - 1]; // The previous song's directory
+    wxString newSongName = wxEmptyString;                        // The previous song's name
+
+    // Changing the highlighted song on songlist to new song
+    for (int i = (newSongDirectory.length() - 1); i >= 0; i--)
+    {
+      if (newSongDirectory[i] == '/')
+      {
+        newSongName = newSongDirectory.substr(i + 1);
+        break;
+      }
+    }
+
+    songlist->SetSelection(songlist->FindString(newSongName));
+    loadMediaPlayer(newSongDirectory);
+  }
+}
+
+void Controls::nextSong(wxCommandEvent& evt)
+{
+  std::cout << "Hello game" << std::endl;
 }
 

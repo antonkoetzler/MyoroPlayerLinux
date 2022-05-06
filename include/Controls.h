@@ -14,7 +14,14 @@
 #include <cstdio>
 #include <string.h>
 
-enum { MEDIA };
+enum
+{
+  MEDIA,
+  SHUFFLE,
+  PREV,
+  PLAY,
+  NEXT
+};
 
 class Controls : public wxPanel
 {
@@ -31,6 +38,10 @@ class Controls : public wxPanel
 
   // Event functions
   void playSong(wxMediaEvent&);
+  void toggleShuffle(wxCommandEvent&);
+  void togglePlay(wxCommandEvent&);
+  void previousSong(wxCommandEvent&);
+  void nextSong(wxCommandEvent&);
 
  private:
   DECLARE_EVENT_TABLE();
@@ -55,5 +66,8 @@ class Controls : public wxPanel
   wxMediaCtrl* mediaPlayer;
   UpdateSlider* updateSlider;
   SongList* songlist;
+  wxVector<wxString> songCache;
+
+  int shuffleToggle = 0;
 };
 
