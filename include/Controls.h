@@ -13,6 +13,8 @@
 #include <taglib/attachedpictureframe.h>
 #include <cstdio>
 #include <string.h>
+// rand()
+#include <stdlib.h>
 
 enum
 {

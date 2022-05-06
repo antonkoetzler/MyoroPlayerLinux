@@ -240,30 +240,67 @@ void Controls::togglePlay(wxCommandEvent& evt)
 
 void Controls::previousSong(wxCommandEvent& evt)
 {
-  // Since the current song is in the songCache, we need 2 in the vector
+  // songCache.size() > 1, because the current song playing is in the vector
   if (songCache.size() > 1)
   {
-    songCache.pop_back();
-    wxString newSongDirectory = songCache[songCache.size() - 1]; // The previous song's directory
-    wxString newSongName = wxEmptyString;                        // The previous song's name
+    songCache.pop_back(); // Remove current song playing
+    wxString songDirectory = songCache[songCache.size() - 1]; // Get the 'previous' song
+    wxString songName = wxEmptyString;
+    songCache.pop_back(); // Remove 'previous' song as Controls::playSong will add this to songCache
 
-    // Changing the highlighted song on songlist to new song
-    for (int i = (newSongDirectory.length() - 1); i >= 0; i--)
+    // Getting the song name without the directory
+    for (int i = (songDirectory.length() - 1); i >= 0; i--)
     {
-      if (newSongDirectory[i] == '/')
+      if (songDirectory[i] == '/')
       {
-        newSongName = newSongDirectory.substr(i + 1);
+        songName = songDirectory.substr(i + 1);
         break;
       }
     }
 
-    songlist->SetSelection(songlist->FindString(newSongName));
-    loadMediaPlayer(newSongDirectory);
+    loadMediaPlayer(songDirectory); // Play song
+    songlist->SetSelection(songlist->FindString(songName)); // Change highlighted song of songlist
   }
 }
 
 void Controls::nextSong(wxCommandEvent& evt)
 {
-  std::cout << "Hello game" << std::endl;
+  // Result variable, index of songlist we'll be playing
+  int nextSongIndex = 0;
+
+  // Getting the name from current song playing
+  wxString songName = wxEmptyString;
+  for (int i = (songCache[songCache.size() - 1].length() - 1); i >= 0; i--)
+  {
+    if (songCache[songCache.size() - 1][i] == '/')
+    {
+      songName = songCache[songCache.size() - 1].substr(i + 1);
+      break;
+    }
+  }
+
+  // No shuffle, if current song's index is songlist->GetCount(), nextSongIndex stays 0
+  if (shuffleToggle == 0)
+  {
+    if ((songlist->GetCount() - 1) != songlist->FindString(songName))
+      nextSongIndex = songlist->FindString(songName) + 1;
+  }
+  // Shuffle
+  else
+  {
+    int currentSongIndex = songlist->FindString(songName);
+
+    // Generate random index that isn't equal to currentSongIndex
+    while (true)
+    {
+      nextSongIndex = rand() % songlist->GetCount();
+      if (nextSongIndex != currentSongIndex) break;
+    }
+  }
+
+  // Loading and changing highlighted song on songlist
+  wxString songDirectory = songlist->getPlaylistDirectory() + songlist->GetString(nextSongIndex);
+  loadMediaPlayer(songDirectory);
+  songlist->SetSelection(nextSongIndex);
 }
 
