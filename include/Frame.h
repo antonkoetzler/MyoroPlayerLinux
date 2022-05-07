@@ -8,7 +8,8 @@
 enum
 {
   CHANGE_DIRECTORY_INPUT,
-  CHANGE_DIRECTORY_BUTTON
+  CHANGE_DIRECTORY_BUTTON,
+  QUEUE
 };
 
 class Frame : public wxFrame
@@ -22,6 +23,8 @@ class Frame : public wxFrame
   void exit(wxCommandEvent&);
   void toggleControls(wxCommandEvent&);
   void loadSong(wxCommandEvent&);
+  void playlistMenu(wxMouseEvent&);
+  void queueSong(wxCommandEvent&);
 
  private:
   DECLARE_EVENT_TABLE();

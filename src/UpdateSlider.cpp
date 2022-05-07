@@ -71,4 +71,9 @@ void UpdateSlider::setSongCache(wxVector<wxString> songCacheArg)
   for (size_t i = 0; i < songCacheArg.size(); i++) songCache.push_back(songCacheArg[i]);
 }
 void UpdateSlider::setShuffleToggle(int shuffleToggleArg) { shuffleToggle = shuffleToggleArg; }
+void UpdateSlider::setQueue(wxVector<wxString> queueArg)
+{
+  queue.clear();
+  for (size_t i = 0; i < queueArg.size(); i++) queue.push_back(queueArg[i]);
+}
 

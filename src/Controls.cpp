@@ -131,6 +131,9 @@ void Controls::loadMediaPlayer(wxString songDirectory)
 }
 
 void Controls::setUpdateSliderSonglist(SongList* songlistArg) { updateSlider->setSonglist(songlistArg); }
+void Controls::setUpdateSliderQueue() { updateSlider->setQueue(queue); }
+
+void Controls::addToQueue(wxString songDirectory) { queue.push_back(songDirectory); }
 
 void Controls::playSong(wxMediaEvent& evt)
 {
@@ -285,23 +288,46 @@ void Controls::nextSong(wxCommandEvent& evt)
     }
   }
 
-  // No shuffle, if current song's index is songlist->GetCount(), nextSongIndex stays 0
-  if (shuffleToggle == 0)
+  // No queue, song determined by shuffle or no shuffle
+  if (queue.empty())
   {
-    if ((songlist->GetCount() - 1) != songlist->FindString(songName))
-      nextSongIndex = songlist->FindString(songName) + 1;
+    // No shuffle, if current song's index is songlist->GetCount(), nextSongIndex stays 0
+    if (shuffleToggle == 0)
+    {
+      if ((songlist->GetCount() - 1) != songlist->FindString(songName))
+        nextSongIndex = songlist->FindString(songName) + 1;
+    }
+    // Shuffle
+    else
+    {
+      int currentSongIndex = songlist->FindString(songName);
+
+      // Generate random index that isn't equal to currentSongIndex
+      while (true)
+      {
+        nextSongIndex = rand() % songlist->GetCount();
+        if (nextSongIndex != currentSongIndex) break;
+      }
+    }
   }
-  // Shuffle
+  // Queued songs available
   else
   {
-    int currentSongIndex = songlist->FindString(songName);
+    wxString nextSongDirectory = queue[queue.size() - 1];
+    wxString nextSongName;
+    queue.pop_back();
 
-    // Generate random index that isn't equal to currentSongIndex
-    while (true)
+    // Removing directory from nextSongDirectory
+    for (int i = (nextSongDirectory.length() - 1); i >= 0; i--)
     {
-      nextSongIndex = rand() % songlist->GetCount();
-      if (nextSongIndex != currentSongIndex) break;
+      if (nextSongDirectory[i] == '/')
+      {
+        nextSongName = nextSongDirectory.substr(i + 1);
+        break;
+      }
     }
+
+    nextSongIndex = songlist->FindString(nextSongName);
   }
 
   // Loading and changing highlighted song on songlist

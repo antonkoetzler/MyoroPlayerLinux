@@ -20,12 +20,14 @@ class UpdateSlider : public wxTimer
   void setSonglist(SongList*);
   void setSongCache(wxVector<wxString>);
   void setShuffleToggle(int);
+  void setQueue(wxVector<wxString>);
 
  private:
   wxSlider* musicSlider;
   wxMediaCtrl* mediaPlayer;
   SongList* songlist;
   wxVector<wxString> songCache;
+  wxVector<wxString> queue;
   int shuffleToggle = 0;
 };
 

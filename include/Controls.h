@@ -38,6 +38,8 @@ class Controls : public wxPanel
   void initMusicInformation();
   void loadMediaPlayer(wxString);
   void setUpdateSliderSonglist(SongList*);
+  void setUpdateSliderQueue();
+  void addToQueue(wxString);
 
   // Event functions
   void playSong(wxMediaEvent&);
@@ -70,6 +72,7 @@ class Controls : public wxPanel
   UpdateSlider* updateSlider;
   SongList* songlist;
   wxVector<wxString> songCache;
+  wxVector<wxString> queue;
 
   int shuffleToggle = 0;
 };

@@ -1,13 +1,18 @@
 #include "Frame.h"
 
 BEGIN_EVENT_TABLE(Frame, wxFrame)
+  // Menubar
   EVT_MENU(CHANGE_DIRECTORY, Frame::showChangeDirectory)
   EVT_MENU(wxID_EXIT, Frame::exit)
   EVT_MENU(TOGGLE_CONTROLS, Frame::toggleControls)
+  // Right click menu
+  EVT_MENU(QUEUE, Frame::queueSong)
 
+  // Popup window (change playlist & youtube to mp3 popup windows)
   EVT_TEXT_ENTER(CHANGE_DIRECTORY_INPUT, Frame::changeDirectory)
   EVT_BUTTON(CHANGE_DIRECTORY_BUTTON, Frame::changeDirectory)
 
+  // SongList*
   EVT_LISTBOX_DCLICK(SONGLIST, Frame::loadSong)
 END_EVENT_TABLE()
 
@@ -27,6 +32,10 @@ Frame::Frame() : wxFrame(nullptr, wxID_ANY, "MyoroPlayerLinux", wxDefaultPositio
   menubar = new MenuBar();
   SetMenuBar(menubar);
   Centre();
+
+  // Frame::playlistMenu is the right click menu to, i.e., queue songs
+  // We bind this only to playlist as we want the right click to work only on playlist
+  songlist->Connect(wxEVT_RIGHT_UP, wxMouseEventHandler(Frame::playlistMenu), nullptr, this);
 }
 
 Frame::~Frame() { Destroy(); }
@@ -79,6 +88,8 @@ void Frame::changeDirectory(wxCommandEvent& evt)
     // Creating a new SongList
     delete songlist;
     songlist = new SongList(this, directory);
+    songlist->Connect(wxEVT_RIGHT_UP, wxMouseEventHandler(Frame::playlistMenu), nullptr, this);
+
 
     // Updating pointers to songlist
     controls->setSongList(songlist);
@@ -112,5 +123,24 @@ void Frame::loadSong(wxCommandEvent& evt)
 
   wxString songDirectory = songlist->getPlaylistDirectory() + evt.GetString();
   controls->loadMediaPlayer(songDirectory);
+}
+
+void Frame::playlistMenu(wxMouseEvent& evt)
+{
+  wxClientDC dc(this);
+  songlist->SetSelection(songlist->HitTest(evt.GetLogicalPosition(dc)));
+
+  wxMenuItem* popupQueue = new wxMenuItem(nullptr, QUEUE, "Queue");
+  wxMenu* popup = new wxMenu();
+  popup->Append(popupQueue);
+
+  PopupMenu(popup, wxDefaultPosition);
+}
+
+void Frame::queueSong(wxCommandEvent& evt)
+{
+  wxString songDirectory = songlist->getPlaylistDirectory() + songlist->GetString(songlist->GetSelection());
+  controls->addToQueue(songDirectory);
+  controls->setUpdateSliderQueue();
 }
 
