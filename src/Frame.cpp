@@ -80,8 +80,9 @@ void Frame::changeDirectory(wxCommandEvent& evt)
     delete songlist;
     songlist = new SongList(this, directory);
 
-    // Updating controls' pointer to songlist
+    // Updating pointers to songlist
     controls->setSongList(songlist);
+    controls->setUpdateSliderSonglist(songlist);
 
     sizer->Add(songlist, 1, wxEXPAND);
     sizer->Add(controls, 0, wxEXPAND);

@@ -37,6 +37,7 @@ class Controls : public wxPanel
   void initMusicControl();
   void initMusicInformation();
   void loadMediaPlayer(wxString);
+  void setUpdateSliderSonglist(SongList*);
 
   // Event functions
   void playSong(wxMediaEvent&);

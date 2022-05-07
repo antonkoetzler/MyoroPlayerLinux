@@ -1,9 +1,4 @@
-1. Buttons
-  1. Play
-  2. Previous
-  3. Next
-  4. Shuffle
-  5. Making sure there's complete song caching functionality
-2. Making the sliders work
+1. Making the sliders work
   1. Music slider
   2. Volume slider
+2. Queuing functionality

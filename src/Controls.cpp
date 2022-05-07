@@ -24,8 +24,8 @@ Controls::Controls(wxFrame* parent, SongList* songlistArg) : wxPanel(parent, wxI
   );
 
   mediaPlayer = new wxMediaCtrl(this, MEDIA);
-  updateSlider = new UpdateSlider(musicSlider, mediaPlayer);
   songlist = songlistArg;
+  updateSlider = new UpdateSlider(musicSlider, mediaPlayer, songlist);
 
   // Adding everything to the parent sizer
   sizer = new wxBoxSizer(wxHORIZONTAL);
@@ -130,9 +130,12 @@ void Controls::loadMediaPlayer(wxString songDirectory)
   if (!mediaPlayer->Load(songDirectory)) exit(1);
 }
 
+void Controls::setUpdateSliderSonglist(SongList* songlistArg) { updateSlider->setSonglist(songlistArg); }
+
 void Controls::playSong(wxMediaEvent& evt)
 {
   mediaPlayer->Play();
+  updateSlider->Start(1000);
 
   // Setting Controls::textInformation
   wxString songName = songlist->GetString(songlist->GetSelection());
@@ -208,6 +211,8 @@ void Controls::playSong(wxMediaEvent& evt)
 
   // Adding song to Controls::songCache
   songCache.push_back(songDirectory);
+  // Updating UpdateSlider::songCache
+  updateSlider->setSongCache(songCache);
 }
 
 void Controls::toggleShuffle(wxCommandEvent& evt)
@@ -221,6 +226,7 @@ void Controls::toggleShuffle(wxCommandEvent& evt)
       shuffleToggle = 0;
       break;
   }
+  updateSlider->setShuffleToggle(shuffleToggle);
 }
 
 void Controls::togglePlay(wxCommandEvent& evt)
