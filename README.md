@@ -16,8 +16,7 @@ A clone of https://www.github.com/antonkoetzler/MyoroPlayer exclusive to Linux. 
   4. `youtube-dl`, `gtk3`
 1. Download MyoroPlayerLinux's contents (GitHub "Download ZIP" option)
 2. Extract MyoroPlayerLinux-main.zip
-3. cd MyoroPlayerLinux-main
-4. sh build.sh
+3. `cd MyoroPlayerLinux-main; sh build.sh`
 5. Place binaries wherever
   - You'll need `./img/`, `./songs/`, and `MyoroPlayerLinux` (executable itself)
 
