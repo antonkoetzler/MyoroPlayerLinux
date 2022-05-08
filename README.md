@@ -6,7 +6,7 @@ A clone of https://www.github.com/antonkoetzler/MyoroPlayer exclusive to Linux. 
 1. Go to: https://github.com/antonkoetzler/MyoroPlayerLinux/releases/tag/1.0
 2. Download MyoroPlayerLinux.zip
 3. `unzip MyoroPlayerLinux.zip; cd MyoroPlayerLinux; sh install.sh`
-4. Install dependancies: `pacman -S youtube-dl gtk3 base-devel`
+4. Install dependancies: `sudo pacman -S youtube-dl gtk3 base-devel`
 ## Installing Through Source
 - Prerequisites
   1. CMake
