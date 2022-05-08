@@ -5,7 +5,7 @@ A clone of https://www.github.com/antonkoetzler/MyoroPlayer exclusive to Linux. 
 ## Installing Normally (Using Pre-Compiled Binaries)
 1. Go to: https://github.com/antonkoetzler/MyoroPlayerLinux/releases/tag/1.0
 2. Download MyoroPlayerLinux.zip
-3. `unzip MyoroPlayerLinux.zip; cd MyoroPlayerLinux; sh install.sh
+3. `unzip MyoroPlayerLinux.zip; cd MyoroPlayerLinux; sh install.sh`
 4. Enter password as the script makes sure dependancies are installed
 ## Installing Through Source
 - Prerequisites
