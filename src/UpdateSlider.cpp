@@ -36,23 +36,46 @@ void UpdateSlider::Notify()
       }
     }
 
-    // No shuffle, if current song's index is songlist->GetCount(), nextSongIndex stays 0
-    if (shuffleToggle == 0)
+    // No queued songs available
+    if (songlist->getQueue().empty())
     {
-      if ((songlist->GetCount() - 1) != songlist->FindString(songName))
-        nextSongIndex = songlist->FindString(songName) + 1;
+      // No shuffle, if current song's index is songlist->GetCount(), nextSongIndex stays 0
+      if (shuffleToggle == 0)
+      {
+        if ((songlist->GetCount() - 1) != songlist->FindString(songName))
+          nextSongIndex = songlist->FindString(songName) + 1;
+      }
+      // Shuffle
+      else
+      {
+        int currentSongIndex = songlist->FindString(songName);
+
+        // Generate random index that isn't equal to currentSongIndex
+        while (true)
+        {
+          nextSongIndex = rand() % songlist->GetCount();
+          if (nextSongIndex != currentSongIndex) break;
+        }
+      }
     }
-    // Shuffle
+    // Queued songs available
     else
     {
-      int currentSongIndex = songlist->FindString(songName);
+      wxString nextSongDirectory = songlist->getQueue()[0];
+      wxString nextSongName;
+      songlist->removeFromQueue();
 
-      // Generate random index that isn't equal to currentSongIndex
-      while (true)
+      // Removing directory from nextSongDirectory
+      for (int i = (nextSongDirectory.length() - 1); i >= 0; i--)
       {
-        nextSongIndex = rand() % songlist->GetCount();
-        if (nextSongIndex != currentSongIndex) break;
+        if (nextSongDirectory[i] == '/')
+        {
+          nextSongName = nextSongDirectory.substr(i + 1);
+          break;
+        }
       }
+
+      nextSongIndex = songlist->FindString(nextSongName);
     }
 
     // Loading and changing highlighted song on songlist
@@ -71,9 +94,4 @@ void UpdateSlider::setSongCache(wxVector<wxString> songCacheArg)
   for (size_t i = 0; i < songCacheArg.size(); i++) songCache.push_back(songCacheArg[i]);
 }
 void UpdateSlider::setShuffleToggle(int shuffleToggleArg) { shuffleToggle = shuffleToggleArg; }
-void UpdateSlider::setQueue(wxVector<wxString> queueArg)
-{
-  queue.clear();
-  for (size_t i = 0; i < queueArg.size(); i++) queue.push_back(queueArg[i]);
-}
 

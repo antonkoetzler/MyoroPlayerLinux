@@ -47,3 +47,7 @@ void SongList::appendSongs()
 
 wxString SongList::getPlaylistDirectory() { return playlistDirectory; }
 
+wxVector<wxString> SongList::getQueue() { return queue; }
+void SongList::addToQueue(wxString songDirectory) { queue.push_back(songDirectory); }
+void SongList::removeFromQueue() { queue.erase(queue.begin()); }
+

@@ -12,10 +12,14 @@ class SongList : public wxListBox
   SongList(wxFrame*, wxString);
 
   void appendSongs();
+  wxVector<wxString> getQueue();
+  void addToQueue(wxString);
+  void removeFromQueue();
   wxString getPlaylistDirectory();
 
  private:
   wxDir* directory;
   wxString playlistDirectory = wxGetCwd() + "/songs/";
+  wxVector<wxString> queue;
 };
 

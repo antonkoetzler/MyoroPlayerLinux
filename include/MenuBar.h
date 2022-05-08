@@ -5,7 +5,9 @@
 enum
 {
   TOGGLE_CONTROLS,
-  CHANGE_DIRECTORY
+  CHANGE_DIRECTORY,
+  REFRESH,
+  YT2MP3
 };
 
 class MenuBar : public wxMenuBar
@@ -15,9 +17,11 @@ class MenuBar : public wxMenuBar
 
  private:
   wxMenu* file;
+    wxMenuItem* fileYouTubeToMP3;
     wxMenuItem* fileChangeDirectory;
     wxMenuItem* fileExit;
   wxMenu* view;
+    wxMenuItem* viewRefreshPlaylist;
     wxMenuItem* viewToggleControls;
 };
 

@@ -6,6 +6,9 @@ BEGIN_EVENT_TABLE(Controls, wxPanel)
   EVT_BUTTON(PLAY, Controls::togglePlay)
   EVT_BUTTON(PREV, Controls::previousSong)
   EVT_BUTTON(NEXT, Controls::nextSong)
+
+  // Music & volume sliders
+  EVT_SCROLL_THUMBRELEASE(Controls::changeSliderPosition)
 END_EVENT_TABLE()
 
 Controls::Controls(wxFrame* parent, SongList* songlistArg) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(1000, 90))
@@ -15,8 +18,8 @@ Controls::Controls(wxFrame* parent, SongList* songlistArg) : wxPanel(parent, wxI
 
   volumeSlider = new wxSlider(
     this,
-    wxID_ANY,
-    50,
+    VOLUME_SLIDER,
+    100,
     0,
     100,
     wxDefaultPosition,
@@ -43,7 +46,7 @@ void Controls::initMusicControl()
 {
   musicSlider = new wxSlider(
     this,
-    wxID_ANY,
+    MUSIC_SLIDER,
     50,
     0,
     100,
@@ -131,9 +134,6 @@ void Controls::loadMediaPlayer(wxString songDirectory)
 }
 
 void Controls::setUpdateSliderSonglist(SongList* songlistArg) { updateSlider->setSonglist(songlistArg); }
-void Controls::setUpdateSliderQueue() { updateSlider->setQueue(queue); }
-
-void Controls::addToQueue(wxString songDirectory) { queue.push_back(songDirectory); }
 
 void Controls::playSong(wxMediaEvent& evt)
 {
@@ -289,7 +289,7 @@ void Controls::nextSong(wxCommandEvent& evt)
   }
 
   // No queue, song determined by shuffle or no shuffle
-  if (queue.empty())
+  if (songlist->getQueue().empty())
   {
     // No shuffle, if current song's index is songlist->GetCount(), nextSongIndex stays 0
     if (shuffleToggle == 0)
@@ -313,9 +313,9 @@ void Controls::nextSong(wxCommandEvent& evt)
   // Queued songs available
   else
   {
-    wxString nextSongDirectory = queue[queue.size() - 1];
+    wxString nextSongDirectory = songlist->getQueue()[0];
     wxString nextSongName;
-    queue.pop_back();
+    songlist->removeFromQueue();
 
     // Removing directory from nextSongDirectory
     for (int i = (nextSongDirectory.length() - 1); i >= 0; i--)
@@ -334,5 +334,21 @@ void Controls::nextSong(wxCommandEvent& evt)
   wxString songDirectory = songlist->getPlaylistDirectory() + songlist->GetString(nextSongIndex);
   loadMediaPlayer(songDirectory);
   songlist->SetSelection(nextSongIndex);
+}
+
+void Controls::changeSliderPosition(wxScrollEvent& evt)
+{
+  switch (evt.GetId())
+  {
+    case MUSIC_SLIDER:
+      musicSlider->SetValue(evt.GetPosition());
+      mediaPlayer->Seek(evt.GetPosition() * 1000);
+      break;
+    case VOLUME_SLIDER:
+      volumeSlider->SetValue(evt.GetPosition());
+      double volume = (double)evt.GetPosition() / 100;
+      mediaPlayer->SetVolume(volume);
+      break;
+  }
 }
 

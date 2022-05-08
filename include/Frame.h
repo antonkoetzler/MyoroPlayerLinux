@@ -9,6 +9,8 @@ enum
 {
   CHANGE_DIRECTORY_INPUT,
   CHANGE_DIRECTORY_BUTTON,
+  YT2MP3_INPUT,
+  YT2MP3_BUTTON,
   QUEUE
 };
 
@@ -20,11 +22,14 @@ class Frame : public wxFrame
 
   void showChangeDirectory(wxCommandEvent&);
     void changeDirectory(wxCommandEvent&);
+  void showYouTubeToMP3(wxCommandEvent&);
+    void YouTubeToMP3(wxCommandEvent&);
   void exit(wxCommandEvent&);
   void toggleControls(wxCommandEvent&);
   void loadSong(wxCommandEvent&);
   void playlistMenu(wxMouseEvent&);
   void queueSong(wxCommandEvent&);
+  void refreshPlaylist(wxCommandEvent&);
 
  private:
   DECLARE_EVENT_TABLE();
