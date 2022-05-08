@@ -10,7 +10,7 @@ A clone of https://www.github.com/antonkoetzler/MyoroPlayer exclusive to Linux. 
 ## Installing Through Source
 - Prerequisites
   1. CMake
-  2. C++ compiler (build-essential, base-devel, etc)
+  2. C++ compiler (`build-essential`, `base-devel`, etc)
   3. Compiled wxWidgets source
     - Instructions: https://github.com/antonkoetzler/wxWidgets/blob/main/Installation/LinuxInstallation.pdf
   4. `youtube-dl`, `gtk3`
